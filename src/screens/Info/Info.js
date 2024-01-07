@@ -1,5 +1,4 @@
-import { View, Text, TouchableOpacity, ScrollView, Alert } from "react-native";
-import i18next from "i18next";
+import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import { useTranslation } from "react-i18next";
 import { ImageVariant } from "@/components/atoms";
 import { Brand } from "@/components/molecules";
@@ -9,27 +8,13 @@ import { isImageSourcePropType } from "@/types/guards/image";
 import SendImage from "@/theme/assets/images/send.png";
 import ColorsWatchImage from "@/theme/assets/images/colorswatch.png";
 import TranslateImage from "@/theme/assets/images/translate.png";
+import { useRoute } from "@react-navigation/native";
 
-function Example({ navigation }) {
+function Info({ navigation }) {
+  const route = useRoute();
+
   const { t } = useTranslation(["example", "welcome"]);
-  const {
-    colors,
-    variant,
-    changeTheme,
-    layout,
-    gutters,
-    fonts,
-    components,
-    backgrounds,
-  } = useTheme();
-
-  const onChangeTheme = () => {
-    changeTheme(variant === "default" ? "dark" : "default");
-  };
-
-  const onChangeLanguage = (lang) => {
-    void i18next.changeLanguage(lang);
-  };
+  const { layout, gutters, fonts, components, backgrounds } = useTheme();
 
   if (
     !isImageSourcePropType(SendImage) ||
@@ -38,6 +23,7 @@ function Example({ navigation }) {
   ) {
     throw new Error("Image source is not valid");
   }
+
   return (
     <SafeScreen>
       <ScrollView
@@ -103,38 +89,54 @@ function Example({ navigation }) {
             ]}
           >
             <TouchableOpacity
-              testID="fetch-user-button"
-              style={[components.buttonCircle, gutters.marginBottom_16]}
+              testID="fetch-home-button"
+              style={[layout.flex, layout.justifyCenter, layout.itemsCenter]}
               onPress={() => navigation.navigate("Info")}
             >
-              <ImageVariant
-                source={SendImage}
-                style={{ tintColor: colors.purple500 }}
-              />
+              <Text
+                style={[
+                  route.name === "Info" ? fonts.red500 : fonts.gray400,
+                  fonts.bold,
+                  fonts.size_24,
+                  gutters.marginBottom_32,
+                ]}
+              >
+                Home
+              </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              testID="change-theme-button"
-              style={[components.buttonCircle, gutters.marginBottom_16]}
-              onPress={() => onChangeTheme()}
+              testID="change-form-button"
+              style={[layout.flex, layout.justifyCenter, layout.itemsCenter]}
+              onPress={() => navigation.navigate("Form")}
             >
-              <ImageVariant
-                source={ColorsWatchImage}
-                style={{ tintColor: colors.purple500 }}
-              />
+              <Text
+                style={[
+                  route.name === "Form" ? fonts.red500 : fonts.gray400,
+                  fonts.bold,
+                  fonts.size_24,
+                  gutters.marginBottom_32,
+                ]}
+              >
+                Form
+              </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              testID="change-language-button"
-              style={[components.buttonCircle, gutters.marginBottom_16]}
-              onPress={() =>
-                onChangeLanguage(i18next.language === "fr" ? "en" : "fr")
-              }
+              testID="change-map-button"
+              style={[layout.flex, layout.justifyCenter, layout.itemsCenter]}
+              onPress={() => navigation.navigate("Map")}
             >
-              <ImageVariant
-                source={TranslateImage}
-                style={{ tintColor: colors.purple500 }}
-              />
+              <Text
+                style={[
+                  fonts.gray400,
+                  fonts.bold,
+                  fonts.size_24,
+                  gutters.marginBottom_32,
+                ]}
+              >
+                Map
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -142,4 +144,4 @@ function Example({ navigation }) {
     </SafeScreen>
   );
 }
-export default Example;
+export default Info;
