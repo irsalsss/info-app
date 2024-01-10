@@ -6,7 +6,7 @@ import { storage } from "@/App";
 import { TextInput } from "react-native-gesture-handler";
 import { useRoute } from "@react-navigation/native";
 
-function Form() {
+function Form({ navigation }) {
   const route = useRoute();
 
   const [isEdit, setIsEdit] = useState(false);
@@ -171,7 +171,7 @@ function Form() {
           <TouchableOpacity
             testID="change-map-button"
             style={[layout.flex, layout.justifyCenter, layout.itemsCenter]}
-            onPress={() => navigation.navigate("Map")}
+            onPress={() => navigation.navigate("Maps")}
           >
             <Text
               style={[
@@ -181,7 +181,7 @@ function Form() {
                 gutters.marginBottom_32,
               ]}
             >
-              Map
+              Maps
             </Text>
           </TouchableOpacity>
         </View>

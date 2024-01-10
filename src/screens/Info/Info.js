@@ -125,7 +125,7 @@ function Info({ navigation }) {
             <TouchableOpacity
               testID="change-map-button"
               style={[layout.flex, layout.justifyCenter, layout.itemsCenter]}
-              onPress={() => navigation.navigate("Map")}
+              onPress={() => navigation.navigate("Maps")}
             >
               <Text
                 style={[
@@ -135,7 +135,7 @@ function Info({ navigation }) {
                   gutters.marginBottom_32,
                 ]}
               >
-                Map
+                Maps
               </Text>
             </TouchableOpacity>
           </View>
