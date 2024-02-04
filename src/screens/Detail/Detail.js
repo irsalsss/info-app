@@ -1,9 +1,21 @@
-import { View, Text, TouchableOpacity, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  StyleSheet,
+} from "react-native";
 import { SafeScreen } from "@/components/template";
 import { useTheme } from "@/theme";
 import { useQuery } from "@tanstack/react-query";
 import Icon from "react-native-vector-icons/Ionicons";
 import moment from "moment";
+import { useEffect, useRef } from "react";
+import MapView, { Marker, PROVIDER_GOOGLE, Polyline } from "react-native-maps";
+
+const isEmpty = (obj) =>
+  [Object, Array].includes((obj || {}).constructor) &&
+  !Object.entries(obj || {}).length;
 
 const formatDate = (dateString) => {
   return moment.utc(dateString).format("dddd, DD MMM YYYY");
@@ -13,8 +25,27 @@ const formatTime = (dateString, utcOffset) => {
   return moment(dateString).utcOffset(utcOffset).format("HH:mm");
 };
 
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    height: 400,
+  },
+  containerMap: {
+    ...StyleSheet.absoluteFillObject,
+    alignItems: "center",
+    marginBottom: 40,
+    marginTop: 40,
+  },
+  map: {
+    height: 600,
+    width: "100%",
+  },
+});
+
 function Detail({ navigation, route }) {
   const { id } = route.params;
+
+  const mapView = useRef();
 
   const { layout, fonts } = useTheme();
 
@@ -108,6 +139,47 @@ function Detail({ navigation, route }) {
             </View>
           </View>
         ) : null}
+
+        <View style={styles.container}>
+          <View style={styles.containerMap}>
+            <MapView
+              showsUserLocation={true}
+              ref={mapView}
+              style={styles.map}
+              initialRegion={{
+                latitude: 6.1944,
+                longitude: 106.8229,
+                latitudeDelta: 0.5,
+                longitudeDelta: 0.5,
+              }}
+              // it is important
+              region={{
+                latitude: 0.7893,
+                longitude: 113.9213,
+                latitudeDelta: 60,
+                longitudeDelta: 60,
+              }}
+              provider={PROVIDER_GOOGLE}
+            />
+            <Marker
+              coordinate={{
+                latitude: 6.1944,
+                longitude: 106.8229,
+              }}
+            />
+
+            <Polyline
+              coordinates={[
+                {
+                  latitude: 6.1944,
+                  longitude: 106.8229,
+                },
+              ]}
+              strokeColor={"rgb(0, 0, 0)"}
+              strokeWidth={6}
+            />
+          </View>
+        </View>
 
         <View style={{ height: 48 }}></View>
       </ScrollView>

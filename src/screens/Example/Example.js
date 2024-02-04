@@ -25,8 +25,6 @@ function Example({ navigation }) {
     queryFn: getAllTimezone,
   });
 
-  console.log("timezones", timezones);
-
   return (
     <SafeScreen>
       <ScrollView
