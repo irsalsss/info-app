@@ -1,145 +1,97 @@
-import { View, Text, TouchableOpacity, ScrollView, Alert } from "react-native";
-import i18next from "i18next";
-import { useTranslation } from "react-i18next";
-import { ImageVariant } from "@/components/atoms";
-import { Brand } from "@/components/molecules";
+import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import { SafeScreen } from "@/components/template";
 import { useTheme } from "@/theme";
-import { isImageSourcePropType } from "@/types/guards/image";
-import SendImage from "@/theme/assets/images/send.png";
-import ColorsWatchImage from "@/theme/assets/images/colorswatch.png";
-import TranslateImage from "@/theme/assets/images/translate.png";
+import { useQuery } from "@tanstack/react-query";
 
 function Example({ navigation }) {
-  const { t } = useTranslation(["example", "welcome"]);
-  const {
-    colors,
-    variant,
-    changeTheme,
-    layout,
-    gutters,
-    fonts,
-    components,
-    backgrounds,
-  } = useTheme();
+  const { layout, fonts } = useTheme();
 
-  const onChangeTheme = () => {
-    changeTheme(variant === "default" ? "dark" : "default");
+  const getAllTimezone = async () => {
+    const response = await fetch("https://worldtimeapi.org/api/timezone/Asia", {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+
+    const data = await response.json();
+
+    return data;
   };
 
-  const onChangeLanguage = (lang) => {
-    void i18next.changeLanguage(lang);
-  };
+  const { data: timezones = [] } = useQuery({
+    queryKey: ["getAllTimezone"],
+    queryFn: getAllTimezone,
+  });
 
-  if (
-    !isImageSourcePropType(SendImage) ||
-    !isImageSourcePropType(ColorsWatchImage) ||
-    !isImageSourcePropType(TranslateImage)
-  ) {
-    throw new Error("Image source is not valid");
-  }
+  console.log("timezones", timezones);
+
   return (
     <SafeScreen>
       <ScrollView
-        contentContainerStyle={[
-          layout.flex_1,
-          layout.justifyCenter,
-          layout.itemsCenter,
+        style={[
+          {
+            backgroundColor: "#A9A0A0",
+            paddingHorizontal: 24,
+            paddingTop: 24,
+          },
         ]}
       >
-        <View
-          style={[
-            layout.flex_1,
-            layout.relative,
-            layout.fullWidth,
-            layout.justifyCenter,
-            layout.itemsCenter,
-          ]}
-        >
-          <View
-            style={[layout.absolute, backgrounds.gray100, components.circle250]}
-          />
-
-          <View style={[layout.absolute, gutters.paddingTop_80]}>
-            <Brand height={300} width={300} />
-          </View>
+        <View style={[layout.flex_1, { marginBottom: 20 }]}>
+          <Text style={[fonts.bold, { color: "white", fontSize: 30 }]}>
+            TIMEZONE
+          </Text>
         </View>
 
-        <View
-          style={[
-            layout.flex_1,
-            layout.justifyBetween,
-            layout.itemsStart,
-            layout.fullWidth,
-            gutters.paddingHorizontal_32,
-            gutters.marginTop_40,
-          ]}
-        >
-          <View>
-            <Text style={[fonts.size_40, fonts.gray800, fonts.bold]}>
-              {t("welcome:title")}
-            </Text>
-            <Text
-              style={[
-                fonts.gray400,
-                fonts.bold,
-                fonts.size_24,
-                gutters.marginBottom_32,
-              ]}
-            >
-              {t("welcome:subtitle")}
-            </Text>
-            <Text style={[fonts.size_16, fonts.gray200]}>
-              {t("welcome:description")}
-            </Text>
-          </View>
-
-          <View
+        {timezones.map((timezone) => (
+          <TouchableOpacity
+            key={timezone}
+            testID="timezone-item"
             style={[
               layout.row,
+              layout.flex_1,
               layout.justifyBetween,
+              layout.itemsCenter,
               layout.fullWidth,
-              gutters.marginTop_16,
+              {
+                backgroundColor: "#4F4F4F",
+                padding: 16,
+                borderRadius: 16,
+                height: 110,
+                maxHeight: 110,
+                marginBottom: 16,
+              },
             ]}
+            onPress={() => navigation.navigate("Detail", { id: timezone })}
           >
-            <TouchableOpacity
-              testID="fetch-user-button"
-              style={[components.buttonCircle, gutters.marginBottom_16]}
-              onPress={() => navigation.navigate("Info")}
+            <View
+              style={[
+                layout.row,
+                layout.flex_1,
+                layout.justifyBetween,
+                layout.itemsCenter,
+                layout.fullWidth,
+                {
+                  backgroundColor: "#4F4F4F",
+                  padding: 16,
+                  borderRadius: 16,
+                  height: 110,
+                  maxHeight: 110,
+                },
+              ]}
             >
-              <ImageVariant
-                source={SendImage}
-                style={{ tintColor: colors.purple500 }}
-              />
-            </TouchableOpacity>
+              <Text style={{ color: "white", fontSize: 32, fontWeight: "500" }}>
+                {timezone.replace("/", ", ")}
+              </Text>
+            </View>
+          </TouchableOpacity>
+        ))}
 
-            <TouchableOpacity
-              testID="change-theme-button"
-              style={[components.buttonCircle, gutters.marginBottom_16]}
-              onPress={() => onChangeTheme()}
-            >
-              <ImageVariant
-                source={ColorsWatchImage}
-                style={{ tintColor: colors.purple500 }}
-              />
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              testID="change-language-button"
-              style={[components.buttonCircle, gutters.marginBottom_16]}
-              onPress={() =>
-                onChangeLanguage(i18next.language === "fr" ? "en" : "fr")
-              }
-            >
-              <ImageVariant
-                source={TranslateImage}
-                style={{ tintColor: colors.purple500 }}
-              />
-            </TouchableOpacity>
-          </View>
-        </View>
+        <View style={{ height: 48 }}></View>
       </ScrollView>
     </SafeScreen>
   );
 }
+
 export default Example;
